@@ -15,10 +15,12 @@ intents.members = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
+@commands.cooldown(2, 5, commands.BucketType.user)
 @bot.event
 async def on_ready():
     print(f"Hello, I'm ready! {bot.user.name}")
-
+    
+@commands.cooldown(2, 5, commands.BucketType.user)
 @bot.command()
 async def wiki(ctx: commands.Context, *, characterName):
     if characterName == None:
