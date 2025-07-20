@@ -48,23 +48,19 @@ def getDescription(link: str):
             data = response.read().decode('utf-8')
     except Exception:
         print("WOOWOOWOO - Link doesn't work, check the script")
-        return ["", "", ""]
+        return ["", ""]
 
     parsed_html = BeautifulSoup(data, features='lxml')
     summary = parsed_html.find('span', id='Summary')
     if summary is None or summary.parent is None or summary.parent.parent is None or summary.parent.parent.p is None:
-        return ["", "", ""]
+        return ["", ""]
 
     returnedValues = []
 
     for p in summary.parent.parent.find_all('p'):
         returnedValues.append(p.text)
-    returnedValues.append("")
-    for li in summary.parent.parent.find_all('li'):
-        returnedValues[2] += "* " + li.text + "\n"
-    returnedValues[2] = returnedValues[2].strip()
-    if len(returnedValues) != 3:
-        return ["", "", ""]
+    if len(returnedValues) != 2:
+        return ["", ""]
     return returnedValues
 
 
