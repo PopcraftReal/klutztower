@@ -84,5 +84,11 @@ async def jinx(interaction: discord.Interaction, character: str):
     await interaction.response.send_message(embed=embed, delete_after=DELAY)
 
 
-keep_alive()
-client.run(TOKEN)
+
+try:
+    keep_alive()
+    client.run(TOKEN)
+except discord.errors.HTTPException:
+    print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+    os.system("python restarter.py")
+    os.system('kill 1')
