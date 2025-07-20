@@ -6,6 +6,15 @@ from keep_alive import keep_alive
 from discord.ext import commands
 from discord import app_commands
 
+import urllib.request as req
+
+try: 
+    from BeautifulSoup import BeautifulSoup # type: ignore
+except ImportError:
+    from bs4 import BeautifulSoup
+
+import botc
+
 PREFIX = '-'
 CLOCKTOWER_URL = "https://wiki.bloodontheclocktower.com/"
 
@@ -37,7 +46,8 @@ client = Client(command_prefix=PREFIX, intents=intents)
 @client.tree.command(name="wiki",
                      description="Retrieve wikipedia page of a character")
 async def wiki(interaction: discord.Interaction, character: str):
-    await interaction.response.send_message(f"{CLOCKTOWER_URL}{character}")
+    imageLink = f"{CLOCKTOWER_URL}File:Icon_{botc.clean(character)}.png"
+    await interaction.response.send_message(imageLink)
 
 
 keep_alive()
