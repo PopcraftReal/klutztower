@@ -90,5 +90,5 @@ try:
     client.run(TOKEN)
 except discord.errors.HTTPException:
     print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-    os.system("python restarter.py")
+    os.system("python restart.py")
     os.system('kill 1')
