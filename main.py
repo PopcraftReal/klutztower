@@ -1,31 +1,21 @@
 import discord
-from discord.ext import commands
-import logging
 from dotenv import load_dotenv
 import os
 
 PREFIX = '-'
-
 load_dotenv()
-token = os.getenv('DISCORD_TOKEN')
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+TOKEN = os.getenv('DISCORD_TOKEN')
+
+class Client(discord.Client):
+    async def on_ready(self):
+        print(f'Hello, I\'m ready! {self.user}')
+    
+    async def on_message(self, msg: discord.Message):
+        print(f"Message from {msg.author}: {msg.content}")
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix=PREFIX, intents=intents)
-
-@commands.cooldown(2, 5, commands.BucketType.user)
-@bot.event
-async def on_ready():
-    print(f"Hello, I'm ready! {bot.user.name}")
-    
-@commands.cooldown(2, 5, commands.BucketType.user)
-@bot.command()
-async def wiki(ctx: commands.Context, *, characterName):
-    if characterName == None:
-        await ctx.send("Empty argument")
-        return
-    await ctx.send(f"Looking up {characterName}...")
-
-bot.run(token, log_handler=handler, log_level=logging.DEBUG)
+client = Client(intents=intents)
+client.run(TOKEN)
