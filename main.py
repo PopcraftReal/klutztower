@@ -8,11 +8,6 @@ from discord import app_commands
 
 import urllib.request as req
 
-try: 
-    from BeautifulSoup import BeautifulSoup # type: ignore
-except ImportError:
-    from bs4 import BeautifulSoup
-
 import botc
 
 PREFIX = '-'
@@ -44,10 +39,48 @@ client = Client(command_prefix=PREFIX, intents=intents)
 
 
 @client.tree.command(name="wiki",
-                     description="Retrieve wikipedia page of a character")
+                     description="Retrieve Summary of a character")
 async def wiki(interaction: discord.Interaction, character: str):
+    title = botc.title(character)
+    wikiURL = f"{CLOCKTOWER_URL}{botc.URLify(title)}"
     imageLink = f"{CLOCKTOWER_URL}File:Icon_{botc.clean(character)}.png"
-    await interaction.response.send_message(imageLink)
+    iconURL = botc.retrieveImageURL(imageLink)
+    if iconURL == "":
+        await interaction.response.send_message("Character not found")
+        return
+    descriptions = botc.getDescription(wikiURL)
+    if descriptions[0] == "":
+        await interaction.response.send_message("Something went wrong")
+        return
+    embed = discord.Embed(title=title,
+                          url=wikiURL,
+                          description=descriptions[0])
+    embed.set_thumbnail(url=iconURL)
+    embed.add_field(name="Summary",
+                    value=descriptions[1] + "\n" + descriptions[2])
+
+    await interaction.response.send_message(embed=embed)
+
+
+@client.tree.command(name="jinx", description="Retrieve Jinxes of a character")
+async def jinx(interaction: discord.Interaction, character: str):
+    title = botc.title(character)
+    wikiURL = f"{CLOCKTOWER_URL}{botc.URLify(title)}"
+    imageLink = f"{CLOCKTOWER_URL}File:Icon_{botc.clean(character)}.png"
+    iconURL = botc.retrieveImageURL(imageLink)
+    if iconURL == "":
+        await interaction.response.send_message("Character not found")
+        return
+
+    jinxes = botc.getJinxes(wikiURL)
+    embed = discord.Embed(title=title, url=wikiURL)
+    embed.set_thumbnail(url=iconURL)
+    for jinx in jinxes:
+        embed.add_field(name=jinx[0],
+                        value=jinx[1],
+                        inline=False)
+
+    await interaction.response.send_message(embed=embed)
 
 
 keep_alive()
