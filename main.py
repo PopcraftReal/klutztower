@@ -11,6 +11,7 @@ import urllib.request as req
 import botc
 
 PREFIX = '-'
+DELAY = 60 * 15
 CLOCKTOWER_URL = "https://wiki.bloodontheclocktower.com/"
 
 load_dotenv()
@@ -59,7 +60,7 @@ async def wiki(interaction: discord.Interaction, character: str):
     embed.add_field(name="Summary",
                     value=descriptions[1] + "\n" + descriptions[2])
 
-    await interaction.response.send_message(embed=embed)
+    await interaction.response.send_message(embed=embed, delete_after=DELAY)
 
 
 @client.tree.command(name="jinx", description="Retrieve Jinxes of a character")
@@ -76,13 +77,11 @@ async def jinx(interaction: discord.Interaction, character: str):
     embed = discord.Embed(title=title, url=wikiURL)
     embed.set_thumbnail(url=iconURL)
     for jinx in jinxes:
-        embed.add_field(name=jinx[0],
-                        value=jinx[1],
-                        inline=False)
+        embed.add_field(name=jinx[0], value=jinx[1], inline=False)
     if len(jinxes) == 0:
         embed.description = "No jinx found"
 
-    await interaction.response.send_message(embed=embed)
+    await interaction.response.send_message(embed=embed, delete_after=DELAY)
 
 
 keep_alive()
