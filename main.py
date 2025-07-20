@@ -79,6 +79,8 @@ async def jinx(interaction: discord.Interaction, character: str):
         embed.add_field(name=jinx[0],
                         value=jinx[1],
                         inline=False)
+    if len(jinxes) == 0:
+        embed.description = "No jinx found"
 
     await interaction.response.send_message(embed=embed)
 

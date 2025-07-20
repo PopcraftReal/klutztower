@@ -57,8 +57,6 @@ def getDescription(link: str):
 
     returnedValues = []
 
-    print(summary.parent.parent.text)
-
     for p in summary.parent.parent.find_all('p'):
         returnedValues.append(p.text)
     returnedValues.append("")
