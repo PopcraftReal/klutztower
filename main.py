@@ -8,6 +8,7 @@ from discord import app_commands
 import urllib.request as req
 
 import botc
+from keep_alive import keep_alive
 
 PREFIX = '-'
 DELAY = 60 * 15
@@ -82,9 +83,5 @@ async def jinx(interaction: discord.Interaction, character: str):
 
     await interaction.response.send_message(embed=embed, delete_after=DELAY)
 
-try:
-    client.run(TOKEN)
-except discord.errors.HTTPException:
-    print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-    os.system("python restart.py")
-    os.system('kill 1')
+keep_alive()
+client.run(TOKEN)
