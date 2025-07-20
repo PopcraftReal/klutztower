@@ -1,7 +1,6 @@
 import discord
 from dotenv import load_dotenv
 import os
-from keep_alive import keep_alive
 
 from discord.ext import commands
 from discord import app_commands
@@ -83,10 +82,7 @@ async def jinx(interaction: discord.Interaction, character: str):
 
     await interaction.response.send_message(embed=embed, delete_after=DELAY)
 
-
-
 try:
-    keep_alive()
     client.run(TOKEN)
 except discord.errors.HTTPException:
     print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
