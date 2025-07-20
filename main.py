@@ -58,7 +58,7 @@ async def wiki(interaction: discord.Interaction, character: str):
                           description=descriptions[0])
     embed.set_thumbnail(url=iconURL)
     embed.add_field(name="Summary",
-                    value=descriptions[1] + "\n" + descriptions[2])
+                    value=descriptions[1])
 
     await interaction.response.send_message(embed=embed, delete_after=DELAY)
 
