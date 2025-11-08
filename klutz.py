@@ -1,24 +1,13 @@
 import discord
-from dotenv import load_dotenv
-import os
 
 from discord.ext import commands
 from discord import app_commands
 
-import urllib.request as req
-
 import botc
-from keep_alive import keep_alive
 
 PREFIX = '-'
 DELAY = 60 * 15
 CLOCKTOWER_URL = "https://wiki.bloodontheclocktower.com/"
-
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-if (TOKEN is None):
-    raise Exception('No token found!')
-
 
 class Client(commands.Bot):
 
@@ -82,6 +71,3 @@ async def jinx(interaction: discord.Interaction, character: str):
         embed.description = "No jinx found"
 
     await interaction.response.send_message(embed=embed, delete_after=DELAY)
-
-keep_alive()
-client.run(TOKEN)

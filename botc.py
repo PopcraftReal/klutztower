@@ -1,8 +1,6 @@
 import re
-from typing import no_type_check
 import urllib.request as req
 from bs4 import BeautifulSoup, Tag
-
 
 def clean(s: str):
     return re.sub("[-' ]", "", s.lower())
