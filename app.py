@@ -1,4 +1,4 @@
-from flask import Flask
+from app import Flask
 from threading import Thread
 import klutz
 
