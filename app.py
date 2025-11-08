@@ -1,16 +1,15 @@
-from app import Flask
+from flask import Flask
 from threading import Thread
 import klutz
 
 from dotenv import load_dotenv
 import os
 
-app = Flask('')
-
+app = Flask('klutztower')
 
 @app.route('/')
 def home():
-    return "Hello. I am alive!"
+    return "<p>Hello. I am alive!<p>"
 
 def run():
     print("Hello, I'm also alive")
