@@ -1,5 +1,4 @@
 discord.py
 python-dotenv
-flask
 lxml
 beautifulsoup4

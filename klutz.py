@@ -3,8 +3,13 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+from dotenv import load_dotenv
+import os
+
 import botc
 
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
 PREFIX = '-'
 DELAY = 60 * 15
 CLOCKTOWER_URL = "https://wiki.bloodontheclocktower.com/"
@@ -20,13 +25,11 @@ class Client(commands.Bot):
         except Exception as e:
             print(f"Error syncing commands: {e}")
 
-
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
 client = Client(command_prefix=PREFIX, intents=intents)
-
 
 @client.tree.command(name="wiki",
                      description="Retrieve Summary of a character")
@@ -71,3 +74,5 @@ async def jinx(interaction: discord.Interaction, character: str):
         embed.description = "No jinx found"
 
     await interaction.response.send_message(embed=embed, delete_after=DELAY)
+
+client.run(TOKEN)
