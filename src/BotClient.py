@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from src.cogs import CocktowerCog
+from src.cogs.CocktowerCog import CocktowerCog
 
 class BotClient(commands.Bot):
     async def on_ready(self):
