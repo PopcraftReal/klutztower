@@ -10,12 +10,13 @@ class CocktowerCog(GroupCog, name="botc"):
     @app_commands.command(name="jinx", 
                           description="Retrieve Jinxes of a character")
     async def jinx(self, interaction: Interaction, character: str):
+        await interaction.response.defer()
         title = botc.title(character)
         wikiURL = f"{CLOCKTOWER_URL}{botc.URLify(title)}"
         imageLink = f"{CLOCKTOWER_URL}File:Icon_{botc.clean(character)}.png"
         iconURL = botc.retrieveImageURL(imageLink)
         if iconURL == "":
-            await interaction.response.send_message("Character not found")
+            await interaction.followup.send("Character not found")
             return
 
         jinxes = botc.getJinxes(wikiURL)
@@ -26,21 +27,22 @@ class CocktowerCog(GroupCog, name="botc"):
         if len(jinxes) == 0:
             embed.description = "No jinx found"
 
-        await interaction.response.send_message(embed=embed, delete_after=DELAY)
+        await interaction.followup.send(embed=embed, delete_after=DELAY)
     
     @app_commands.command(name="wiki",
                           description="Retrieve Summary of a character")
     async def wiki(self, interaction: Interaction, character: str):
+        await interaction.response.defer()
         title = botc.title(character)
         wikiURL = f"{CLOCKTOWER_URL}{botc.URLify(title)}"
         imageLink = f"{CLOCKTOWER_URL}File:Icon_{botc.clean(character)}.png"
         iconURL = botc.retrieveImageURL(imageLink)
         if iconURL == "":
-            await interaction.response.send_message("Character not found")
+            await interaction.followup.send("Character not found")
             return
         descriptions = botc.getDescription(wikiURL)
         if descriptions[0] == "":
-            await interaction.response.send_message("Something went wrong")
+            await interaction.followup.send("Something went wrong")
             return
         embed = Embed(title=title,
                             url=wikiURL,
@@ -49,4 +51,4 @@ class CocktowerCog(GroupCog, name="botc"):
         embed.add_field(name="Summary",
                         value=descriptions[1])
 
-        await interaction.response.send_message(embed=embed, delete_after=DELAY)
+        await interaction.followup.send(embed=embed, delete_after=DELAY)
