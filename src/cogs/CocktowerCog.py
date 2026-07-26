@@ -30,7 +30,7 @@ class CocktowerCog(GroupCog, name="botc"):
     
     @app_commands.command(name="wiki",
                           description="Retrieve Summary of a character")
-    async def wiki(interaction: Interaction, character: str):
+    async def wiki(self, interaction: Interaction, character: str):
         title = botc.title(character)
         wikiURL = f"{CLOCKTOWER_URL}{botc.URLify(title)}"
         imageLink = f"{CLOCKTOWER_URL}File:Icon_{botc.clean(character)}.png"
