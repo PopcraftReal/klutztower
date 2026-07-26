@@ -1,11 +1,13 @@
 from discord.ext import commands
 
+from src.cogs.TomatoCog import TomatoCog
 from src.cogs.CocktowerCog import CocktowerCog
 
 class BotClient(commands.Bot):
     async def on_ready(self):
         print("Add cogs...")
         await self.add_cog(CocktowerCog())
+        await self.add_cog(TomatoCog())
         
         print(f'Hello, I\'m ready! {self.user}')
         try:

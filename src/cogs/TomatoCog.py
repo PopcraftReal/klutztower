@@ -1,10 +1,10 @@
 from discord import Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog
 
-from specifics.tomato import retrieveMovie
+from src.specifics.tomato import retrieveMovie
 
 
-class CocktowerCog(GroupCog, name="botc"):
+class TomatoCog(GroupCog, name="tomato"):
 
     @app_commands.command(name="rate")
     async def get_rating(self, interaction: Interaction, movie_title: str):
