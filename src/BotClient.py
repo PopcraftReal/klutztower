@@ -1,16 +1,17 @@
 from discord import Message
 from discord.ext import commands
 
+from database import get_sounds
 from src.cogs.CocktowerCog import CocktowerCog
 from random import randint
 
-MSGS = ["Meow!", "Nya!", "Woof!", "Awawawa!", "Awoo!"]
-
 def get_random_msg():
-    i = randint(0, len(MSGS) - 1)
-    return MSGS[i]
+    msgs = get_sounds()
+    i = randint(0, len(msgs) - 1)
+    return msgs[i]
 
 class BotClient(commands.Bot):
+    
     async def on_ready(self):
         print("Add cogs...")
         await self.add_cog(CocktowerCog())
