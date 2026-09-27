@@ -7,6 +7,7 @@ from src.BotClient import BotClient
 import mysql.connector
 
 PREFIX = '-'
+HOST = "mysql://u238708_dHu0geqITK:BwJJ8JApz_9tPHjBg3Egk_lp@db-par-02.apollopanel.com:3306/s238708_game"
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     if token is None:
         token = ""
     mydb = mysql.connector.connect(
-        host="db-par-02.apollopanel.com:3306",
+        host=HOST,
         user="u238708_dHu0geqITK",
         password="BwJJ8JApz_9tPHjBg3Egk_lp"
     )
