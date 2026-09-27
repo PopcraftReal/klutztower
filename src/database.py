@@ -33,4 +33,18 @@ def execute_fetch(prompt: str):
 
 def get_sounds() -> list[str]:
     data: list[tuple[str]] = cast(list[tuple[str]], execute_fetch("SELECT * FROM furry_sound;"))
+    if data is None:
+        return []
     return [s[0] for s in data]
+
+def add_sound(sound: str):
+    try:
+        execute_fetch(f"INSERT INTO furry_sound VALUES ('{sound}');")
+    except:  # noqa: E722
+        return
+
+def remove_sound(sound: str):
+    try:
+        execute_fetch(f"DELETE FROM furry_sound WHERE sound='{sound}';")
+    except:  # noqa: E722
+        return
