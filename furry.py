@@ -14,5 +14,7 @@ client = BotClient(command_prefix=PREFIX, intents=intents)
 
 if __name__ == "__main__":
     load_dotenv()
-    TOKEN = os.getenv('DISCORD_TOKEN')
-    client.run(TOKEN)
+    token: str | None = os.getenv('DISCORD_TOKEN')
+    if token is None:
+        token = ""
+    client.run(token)
