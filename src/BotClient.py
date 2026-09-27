@@ -1,7 +1,7 @@
 from discord import Message
 from discord.ext import commands
 
-from database import get_sounds
+from src.database import get_sounds
 from src.cogs.CocktowerCog import CocktowerCog
 from random import randint
 
