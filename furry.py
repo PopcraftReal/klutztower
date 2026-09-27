@@ -7,8 +7,8 @@ from src.BotClient import BotClient
 import mysql.connector
 
 PREFIX = '-'
-HOST = "db-par-02.apollopanel.com:3306"
-DATABASE = "mysql://u238708_dHu0geqITK:BwJJ8JApz_9tPHjBg3Egk_lp@db-par-02.apollopanel.com:3306/s238708_game"
+HOST = "db-par-02.apollopanel.com"
+DATABASE = "s238708_game"
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
