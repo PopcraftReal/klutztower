@@ -3,7 +3,6 @@ import discord
 from dotenv import load_dotenv
 import os
 
-from src.database import connect
 from src.BotClient import BotClient
 
 PREFIX = '-'
@@ -18,5 +17,4 @@ if __name__ == "__main__":
     token: str | None = os.getenv('DISCORD_TOKEN')
     if token is None:
         token = ""
-    connect()
     client.run(token)

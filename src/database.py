@@ -18,6 +18,7 @@ def connect():
     cursor = mydb.cursor()
 
 def execute_fetch(prompt: str):
+    connect()
     assert cursor is not None
     cursor.execute(prompt)
     return cursor.fetchall()
