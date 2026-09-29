@@ -1,5 +1,6 @@
-from discord import Interaction, app_commands, Embed
+from discord import Embed, Interaction, app_commands
 from discord.ext.commands import GroupCog
+
 from src.specifics import botc
 
 DELAY = 60 * 15
