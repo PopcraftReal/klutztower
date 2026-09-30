@@ -1,25 +1,48 @@
+import os
+
+from pathlib import Path
 from typing import cast
 
 import mysql.connector
-from mysql.connector import errorcode
+from mysql.connector import Error, errorcode
+from mysql.connector.abstracts import MySQLCursorAbstract
 
-HOST = "db-par-02.apollopanel.com"
-DATABASE = "s238708_game"
+SCHEMA_PATH = Path("./sql_schemas/")
 
 cursor = None
+cnx_pool: mysql.connector.pooling.MySQLConnectionPool
+
+def init():
+    global cnx_pool
+    cnx_pool = mysql.connector.pooling.MySQLConnectionPool(
+        pool_name="mainPool",
+        pool_size=3,
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASS"),
+        database=os.getenv("DATABASE")
+    )
+
+def load_all_schemas():
+    for file_path in SCHEMA_PATH.glob("*.sql"):
+        run_schema(str(file_path))
+
+def run_schema(schema_file_path: str):
+    with open(schema_file_path, 'r', encoding='utf-8') as file:
+        schema_sql = file.read()
+        execute_fetch(schema_sql)
 
 def execute_fetch(prompt: str):
+    assert cnx_pool is not None
+    connection = None
     try:
-        connection = mysql.connector.connect(
-            host=HOST,
-            user="u238708_dHu0geqITK",
-            password="BwJJ8JApz_9tPHjBg3Egk_lp",
-            database=DATABASE
-        )
-        cursor = connection.cursor()
-        cursor.execute(prompt)
-        result = cursor.fetchall()
-    except mysql.connector.Error as error:
+        with cnx_pool.get_connection() as connection:
+            with connection.cursor() as _cur:
+                cursor: MySQLCursorAbstract = cast(MySQLCursorAbstract, _cur)
+                cursor.execute(prompt)
+                result = cursor.fetchall()
+            connection.commit()
+    except Error as error:
         if error.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Something is wrong with your user name or password")
         elif error.errno == errorcode.ER_BAD_DB_ERROR:
@@ -27,8 +50,6 @@ def execute_fetch(prompt: str):
         else:
             print(error)
         return None
-    else:
-        connection.close()
     return result
 
 def get_sounds() -> list[str]:
