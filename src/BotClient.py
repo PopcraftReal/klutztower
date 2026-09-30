@@ -1,5 +1,4 @@
 from discord import Message
-from discord.abc import User
 from discord.ext import commands
 from discord import Status
 
@@ -27,25 +26,17 @@ class BotClient(commands.Bot):
             print(f"Error syncing commands: {e}")
         
         self.fauxFriendId: int = 1554846323184898169
-        self.fauxFriend: User | None = self.get_user(self.fauxFriendId)
         self.correctSelfId: int = 1517883899458617474
-        self.correctSelf: User | None = self.get_user(self.correctSelfId)
-    
-    def isFriendMentioned(self, message: Message):
-        return self.fauxFriend is not None and self.fauxFriend.mentioned_in(message)
     
     async def on_message(self, message: Message) -> None:
         assert self.user is not None
         if self.user.mentioned_in(message):
             await message.channel.send(get_random_msg())
         
-        if self.user.id == self.correctSelfId:
-            if self.isFriendMentioned(message):
-                print("Friend detected somewhere")
-                print(message.guild)
-                print(message.channel.guild)
-                print(message.channel)
-                if message.guild is None or (member := message.guild.get_member(self.fauxFriendId)) is None:
-                    await message.channel.send("My fwiend is not here :<")
-                elif member.status == Status.offline:
-                    await message.channel.send("My fwiend is not online, don't bother")
+        if self.user.id == self.correctSelfId and message.raw_mentions.count(self.fauxFriendId) > 0:
+            if message.guild is not None and \
+                (member := message.guild.get_member(self.fauxFriendId)) is not None and \
+                member.status == Status.offline:
+                await message.channel.send("My fwiend is not online, don't bother")
+            else:
+                await message.channel.send("My fwiend is not here :<")
