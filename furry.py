@@ -3,7 +3,7 @@ import os
 import discord
 from dotenv import load_dotenv
 
-from src.database import init, run_schema
+from src.database import init, load_all_schemas
 from src.BotClient import BotClient
 
 PREFIX = '-'
@@ -19,5 +19,5 @@ if __name__ == "__main__":
     if token is None:
         token = ""
     init()
-    run_schema("./sql_schemas/01-setup.sql")
+    load_all_schemas()
     client.run(token)

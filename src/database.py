@@ -1,9 +1,13 @@
 import os
+
+from pathlib import Path
 from typing import cast
 
 import mysql.connector
 from mysql.connector import Error, errorcode
 from mysql.connector.abstracts import MySQLCursorAbstract
+
+SCHEMA_PATH = Path("./sql_schemas/")
 
 cursor = None
 cnx_pool: mysql.connector.pooling.MySQLConnectionPool
@@ -18,6 +22,10 @@ def init():
         password=os.getenv("DB_PASS"),
         database=os.getenv("DATABASE")
     )
+
+def load_all_schemas():
+    for file_path in SCHEMA_PATH.glob("*.sql"):
+        run_schema(str(file_path))
 
 def run_schema(schema_file_path: str):
     assert cnx_pool is not None
