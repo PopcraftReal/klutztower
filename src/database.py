@@ -30,7 +30,6 @@ def load_all_schemas():
 def run_schema(schema_file_path: str):
     with open(schema_file_path, 'r', encoding='utf-8') as file:
         schema_sql = file.read()
-        print(schema_sql)
         execute_fetch(schema_sql)
 
 def execute_fetch(prompt: str):
