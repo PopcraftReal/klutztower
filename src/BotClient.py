@@ -41,6 +41,9 @@ class BotClient(commands.Bot):
         
         if self.user.id == self.correctSelfId:
             if self.isFriendMentioned(message):
+                print("Friend detected somewhere")
+                print(message.guild)
+                print(message.channel.guild)
                 if message.guild is None or (member := message.guild.get_member(self.fauxFriendId)) is None:
                     await message.channel.send("My fwiend is not here :<")
                 elif member.status == Status.offline:
