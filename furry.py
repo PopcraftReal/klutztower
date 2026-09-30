@@ -3,7 +3,7 @@ import os
 import discord
 from dotenv import load_dotenv
 
-from database import init, run_schema
+from src.database import init, run_schema
 from src.BotClient import BotClient
 
 PREFIX = '-'
