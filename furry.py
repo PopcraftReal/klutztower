@@ -1,7 +1,7 @@
-import discord
-
-from dotenv import load_dotenv
 import os
+
+import discord
+from dotenv import load_dotenv
 
 from src.BotClient import BotClient
 
