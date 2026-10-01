@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord import Status
 
 from src.database import get_sounds
+from src.cogs.IndependentCog import IndependentCog
 from src.cogs.CocktowerCog import CocktowerCog
 from random import randint
 
@@ -18,6 +19,7 @@ class BotClient(commands.Bot):
     async def on_ready(self):
         print("Add cogs...")
         await self.add_cog(CocktowerCog())
+        await self.add_cog(IndependentCog())
         
         print(f'Hello, I\'m ready! {self.user}')
         try:
