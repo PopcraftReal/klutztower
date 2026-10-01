@@ -40,7 +40,7 @@ def getStatus(level: int) -> BatteryStatus:
 
 def createBatteryEmbed(user: User, status: BatteryStatus, level: int):
     embed = Embed(colour=Colour.pink())
-    embed.set_author(name=f"Battery for {user.name}", icon_url=f"{user.display_avatar.url}")
+    embed.set_author(name=f"Battery for {user.display_name}", icon_url=f"{user.display_avatar.url}")
     
     colour: str = getBatteryVisual(level)
     empty: str = ':black_large_square:'
