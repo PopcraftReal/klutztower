@@ -3,3 +3,4 @@ python-dotenv
 lxml
 beautifulsoup4
 mysql-connector-python
+tzdata

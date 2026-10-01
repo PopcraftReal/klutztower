@@ -60,7 +60,7 @@ def get_sounds() -> list[str]:
 
 def add_sound(sound: str):
     try:
-        execute_fetch(f"INSERT INTO furry_sound VALUES ('{sound}');")
+        execute_fetch(f"INSERT IGNORE INTO furry_sound VALUES ('{sound}');")
     except:  # noqa: E722
         return
 
