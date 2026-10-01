@@ -37,6 +37,8 @@ class BotClient(commands.Bot):
             if message.guild is not None and \
                 (member := message.guild.get_member(self.fauxFriendId)) is not None and \
                 member.status == Status.offline:
+                print(member.display_name)
+                print(member.status.name)
                 await message.channel.send("My fwiend is not online, don't bother")
             else:
                 await message.channel.send("My fwiend is not here :<")
