@@ -2,8 +2,7 @@ from datetime import datetime
 from enum import Enum
 from zoneinfo import ZoneInfo
 
-from discord import ChannelType, Colour, Embed, Interaction, app_commands
-from discord.abc import User
+from discord import ChannelType, Colour, Embed, Interaction, app_commands, User
 from discord.ext.commands import Cog
 
 SYDNEY = ZoneInfo("Australia/Sydney")
