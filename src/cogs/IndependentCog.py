@@ -73,10 +73,10 @@ class IndependentCog(Cog):
             
             if send_time is not None:
                 now = datetime.now(SYDNEY)
-                difference = 12 - ((now - send_time.astimezone(SYDNEY)).seconds // 3600)
-                status = getStatus(difference)
+                difference = 12 - ((now - send_time.astimezone(SYDNEY)).total_seconds() // 3600)
+                status = getStatus(int(difference))
             
-            embed = createBatteryEmbed(user, status, difference)
+            embed = createBatteryEmbed(user, status, int(difference))
             await interaction.followup.send(embed=embed)
         else:
             await interaction.followup.send("This makes no sense to me :3")
