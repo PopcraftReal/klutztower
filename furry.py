@@ -7,9 +7,7 @@ from src.database import init, load_all_schemas
 from src.BotClient import BotClient
 
 PREFIX = '-'
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
+intents = discord.Intents.all()
 
 client = BotClient(command_prefix=PREFIX, intents=intents)
 
