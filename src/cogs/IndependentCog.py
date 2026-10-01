@@ -1,10 +1,13 @@
 from datetime import datetime
 from enum import Enum
+from random import randint
 from zoneinfo import ZoneInfo
 from math import inf
 
 from discord import ChannelType, Colour, Embed, Interaction, app_commands, User
 from discord.ext.commands import Cog
+
+from src.database import get_sounds
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 
@@ -60,6 +63,13 @@ def createBatteryEmbed(user: User, status: BatteryStatus, level: int):
     """
     return embed
 
+def get_random_msg():
+    msgs = get_sounds()
+    if len(msgs) - 1 == 0:
+        return "Boo!"
+    i = randint(0, len(msgs) - 1)
+    return msgs[i]
+
 class IndependentCog(Cog):
     
     @app_commands.command(name="battery",
@@ -88,3 +98,9 @@ class IndependentCog(Cog):
             await interaction.followup.send(embed=embed)
         else:
             await interaction.followup.send("This makes no sense to me :3")
+    
+    @app_commands.command(name='fetch',
+                          description='Fetch! Good doggie!')
+    async def fetch(self, interaction: Interaction):
+        await interaction.response.defer()
+        await interaction.followup.send(get_random_msg())
