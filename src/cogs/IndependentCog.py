@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from zoneinfo import ZoneInfo
+from math import inf
 
 from discord import ChannelType, Colour, Embed, Interaction, app_commands, User
 from discord.ext.commands import Cog
@@ -17,6 +18,13 @@ class BatteryStatus(Enum):
     STATUS_CRASHING = "The user is rather crashing because of self-isolation"
     STATUS_WORLDENDING = "The user is dead"
     STATUS_CANT_ELABORATE = "The user hasn't sent a text in the last 500 texts. I think they're dead"
+
+def cap(val: int | float, min: int | float = -inf, max: int | float = inf):
+    if val < min:
+        return min
+    if val > max:
+        return max
+    return val
 
 def getBatteryVisual(level: int) -> str:
     if level == -1:
@@ -73,7 +81,7 @@ class IndependentCog(Cog):
             
             if send_time is not None:
                 now = datetime.now(SYDNEY)
-                difference = 12 - ((now - send_time.astimezone(SYDNEY)).total_seconds() // 3600)
+                difference = cap(12 - ((now - send_time.astimezone(SYDNEY)).total_seconds() // 3600), 0, 12)
                 status = getStatus(int(difference))
             
             embed = createBatteryEmbed(user, status, int(difference))
