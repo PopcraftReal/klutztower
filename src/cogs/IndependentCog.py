@@ -12,7 +12,7 @@ LEVEL_2 = 6
 LEVEL_3 = 9
 
 class BatteryStatus(Enum):
-    STATUS_HAPPY = "The user is happy wiht sufficient interaction"
+    STATUS_HAPPY = "The user is happy with sufficient interaction"
     STATUS_DEPLETING = "The user is feeling rather down with interactions stop"
     STATUS_CRASHING = "The user is rather crashing because of self-isolation"
     STATUS_WORLDENDING = "The user is dead"
