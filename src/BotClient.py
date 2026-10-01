@@ -37,10 +37,8 @@ class BotClient(commands.Bot):
         
         if self.user.id == self.correctSelfId and message.raw_mentions.count(self.fauxFriendId) > 0:
             if message.guild is not None and \
-                message.guild.get_member(self.fauxFriendId) is not None and \
-                message.guild.get_member(self.fauxFriendId).status == Status.offline: # type: ignore
-                print(f"Name: {message.guild.get_member(self.fauxFriendId).display_name}") # type: ignore
-                print(f"Status: {message.guild.get_member(self.fauxFriendId).status.name}") # type: ignore
-                await message.channel.send("My fwiend is not online, don't bother")
+                (member := message.guild.get_member(self.fauxFriendId)) is not None:
+                if member.status == Status.offline:
+                    await message.channel.send("My fwiend is not online, don't bother")
             else:
                 await message.channel.send("My fwiend is not here :<")
