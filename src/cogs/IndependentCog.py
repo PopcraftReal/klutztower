@@ -19,7 +19,7 @@ class BatteryStatus(Enum):
     STATUS_HAPPY = "The user is happy with sufficient interaction"
     STATUS_DEPLETING = "The user is feeling rather down with interactions stop"
     STATUS_CRASHING = "The user is rather crashing because of self-isolation"
-    STATUS_WORLDENDING = "The user is dead"
+    STATUS_WORLDENDING = "The user is dead due to a lack of socialising"
     STATUS_CANT_ELABORATE = "The user hasn't sent a text in the last 500 texts. I think they're dead"
 
 def cap(val: int | float, min: int | float = -inf, max: int | float = inf):
