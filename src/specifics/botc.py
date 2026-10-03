@@ -2,7 +2,9 @@ import re
 import urllib.request as req
 
 from bs4 import BeautifulSoup, Tag
+import logging
 
+logger = logging.getLogger()
 
 def clean(s: str):
     return re.sub("[-' ]", "", s.lower())
@@ -16,12 +18,12 @@ def retrieveImageURL(imageLink: str):
     try:
         imageResponse = req.urlopen(imageLink).read().decode('utf-8')
     except Exception:
-        print("can't load")
+        logger.warning("can't load")
         return ""
 
     src = re.search('<a href="(/images/.+\\.png)">', imageResponse)
     if src is None:
-        print("no link provided")
+        logger.warning("no link provided")
         return ""
     src = re.search('/images/.+\\.png', src.group())
     if src is None:
@@ -47,7 +49,7 @@ def getDescription(link: str):
         with req.urlopen(link) as response:
             data = response.read().decode('utf-8')
     except Exception:
-        print("WOOWOOWOO - Link doesn't work, check the script")
+        logging.warning("WOOWOOWOO - Link doesn't work, check the script")
         return ["", ""]
 
     parsed_html = BeautifulSoup(data, features='lxml')
@@ -70,7 +72,7 @@ def getJinxes(link: str):
         with req.urlopen(link) as response:
             data = response.read().decode('utf-8')
     except Exception:
-        print("WOOWOOWOO - Link doesn't work, check the script")
+        logging.warning("WOOWOOWOO - Link doesn't work, check the script")
         return []
 
     parsed_html = BeautifulSoup(data, features='lxml')

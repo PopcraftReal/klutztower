@@ -13,7 +13,6 @@ logger = logging.getLogger()
 
 def get_random_msg():
     msgs = get_sounds()
-    print(msgs, len(msgs) - 1)
     if len(msgs) - 1 == 0:
         return "Boo!"
     i = randint(0, len(msgs) - 1)
@@ -29,7 +28,7 @@ class BotClient(commands.Bot):
         await self.add_cog(CocktowerCog())
         await self.add_cog(IndependentCog())
         
-        print(f'Hello, I\'m ready! {self.user}')
+        logger.info(f'Hello, I\'m ready! {self.user}')
         try:
             synced = await self.tree.sync()
             logger.info(f"Synced {len(synced)} command(s)")
