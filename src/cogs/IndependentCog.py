@@ -4,8 +4,10 @@ from random import randint
 from zoneinfo import ZoneInfo
 from math import inf
 
-from discord import ChannelType, Colour, Embed, Interaction, app_commands, User
+from discord import ChannelType, Colour, Embed, Interaction, User
+from discord import app_commands
 from discord.ext.commands import Cog
+from discord.app_commands import Choice
 
 from src.database import get_sounds
 
@@ -70,6 +72,12 @@ def get_random_msg():
     i = randint(0, len(msgs) - 1)
     return msgs[i]
 
+SPR_CHOICES = [
+    Choice(name="✂️", value=0),
+    Choice(name="🪨", value=1),
+    Choice(name="📰", value=2)
+]
+
 class IndependentCog(Cog):
     
     @app_commands.command(name="battery",
@@ -104,3 +112,22 @@ class IndependentCog(Cog):
     async def fetch(self, interaction: Interaction):
         await interaction.response.defer()
         await interaction.followup.send(get_random_msg())
+    
+    @app_commands.command(name='spr',
+                          description='Play Scissors, Paper, Rock! with The Furry')
+    @app_commands.choices(
+        userPlay = SPR_CHOICES
+    )
+    async def spc(self, interaction: Interaction, userPlay: Choice[int]):
+        furryPlay = randint(0, 2)
+        
+        msg = f"""
+        I played {SPR_CHOICES[furryPlay]}, and you played {userPlay.name}\n
+        """
+        
+        if userPlay.value == furryPlay:
+            await interaction.response.send_message(msg + "Tie? 🙀")
+        elif userPlay.value > furryPlay or (furryPlay == 2 and userPlay.value == 0):
+            await interaction.response.send_message(msg + "AWAWAWAWA 😿😿😿")
+        else:
+            await interaction.response.send_message(msg + "yayy 😸!")
