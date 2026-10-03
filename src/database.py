@@ -5,6 +5,7 @@ from typing import cast
 
 import aiomysql as asql
 import logging
+import asyncio
 
 logger = logging.getLogger()
 
@@ -20,9 +21,7 @@ async def init():
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
-        db=os.getenv("DATABASE"),
-        read_timeout=10,
-        write_timeout=10
+        db=os.getenv("DATABASE")
     ))
 
 async def load_all_schemas():
@@ -43,6 +42,10 @@ async def get_connection():
         cnx = await cnx_pool.acquire()
     return cnx
 
+async def __fetch(prompt: str, cursor: asql.Cursor):
+    await cursor.execute(prompt)
+    return await cursor.fetchall()
+
 async def execute_fetch(prompt: str):
     assert cnx_pool is not None
     connection = None
@@ -52,8 +55,10 @@ async def execute_fetch(prompt: str):
             await connection.ping()
             async with connection.cursor() as _cur:
                 cursor = cast(asql.Cursor, _cur)
-                await cursor.execute(prompt)
-                result = await cursor.fetchall()
+                result = await asyncio.wait_for(
+                    __fetch(prompt, cursor),
+                    timeout=10
+                )
             await connection.commit()
     except asql.IntegrityError as e:
         logger.error(
