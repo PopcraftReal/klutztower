@@ -71,8 +71,8 @@ async def execute_fetch(prompt: str):
         return None
     return result
 
-def get_sounds() -> list[str]:
-    data: list[tuple[str]] = cast(list[tuple[str]], execute_fetch("SELECT * FROM furry_sound;"))
+async def get_sounds() -> list[str]:
+    data: list[tuple[str]] = cast(list[tuple[str]], await execute_fetch("SELECT * FROM furry_sound;"))
     if data is None:
         return []
     return [s[0] for s in data]

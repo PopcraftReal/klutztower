@@ -11,8 +11,8 @@ import logging
 
 logger = logging.getLogger()
 
-def get_random_msg():
-    msgs = get_sounds()
+async def get_random_msg():
+    msgs = await get_sounds()
     if len(msgs) - 1 == 0:
         return "Boo!"
     i = randint(0, len(msgs) - 1)
@@ -41,7 +41,7 @@ class BotClient(commands.Bot):
     async def on_message(self, message: Message) -> None:
         assert self.user is not None
         if self.user.mentioned_in(message):
-            await message.channel.send(get_random_msg())
+            await message.channel.send(await get_random_msg())
         
         if self.user.id == self.correctSelfId and message.raw_mentions.count(self.fauxFriendId) > 0:
             if message.guild is not None and \
