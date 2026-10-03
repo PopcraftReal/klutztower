@@ -5,7 +5,7 @@ from typing import cast
 
 import mysql.connector
 from mysql.connector import Error, errorcode
-from mysql.connector.abstracts import MySQLCursorAbstract
+from mysql.connector.abstracts import MySQLCursorAbstract, MySQLConnectionAbstract
 
 SCHEMA_PATH = Path("./sql_schemas/")
 
@@ -36,7 +36,10 @@ def execute_fetch(prompt: str):
     assert cnx_pool is not None
     connection = None
     try:
-        with cnx_pool.get_connection() as connection:
+        
+        with cnx_pool.get_connection() as _connection:
+            connection = cast(MySQLConnectionAbstract, _connection)
+            connection.ping(reconnect=True)
             with connection.cursor() as _cur:
                 cursor: MySQLCursorAbstract = cast(MySQLCursorAbstract, _cur)
                 cursor.execute(prompt)
