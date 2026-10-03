@@ -10,7 +10,8 @@ from src.BotClient import BotClient
 
 logging.basicConfig(
     stream=sys.stdout,
-    level=logging.INFO
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s: %(message)s"
 )
 
 PREFIX = '-'
