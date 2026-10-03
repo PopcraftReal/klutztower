@@ -61,9 +61,7 @@ async def execute_fetch(prompt: str):
                 )
             await connection.commit()
     except asql.IntegrityError as e:
-        logger.error(
-            f"Integrity Error '{prompt}': {e}"
-        )
+        logger.error(f"Integrity Error '{prompt}': {e}")
         return None
     except asql.OperationalError as e:
         logger.error(f"Database operational error: {e}")
