@@ -116,18 +116,18 @@ class IndependentCog(Cog):
     @app_commands.command(name='spr',
                           description='Play Scissors, Paper, Rock! with The Furry')
     @app_commands.choices(
-        userPlay = SPR_CHOICES
+        user_choice = SPR_CHOICES
     )
-    async def spc(self, interaction: Interaction, userPlay: Choice[int]):
+    async def spr(self, interaction: Interaction, user_choice: Choice[int]):
         furryPlay = randint(0, 2)
         
         msg = f"""
-        I played {SPR_CHOICES[furryPlay]}, and you played {userPlay.name}\n
+        I played {SPR_CHOICES[furryPlay]}, and you played {user_choice.name}\n
         """
         
-        if userPlay.value == furryPlay:
+        if user_choice.value == furryPlay:
             await interaction.response.send_message(msg + "Tie? 🙀")
-        elif userPlay.value > furryPlay or (furryPlay == 2 and userPlay.value == 0):
+        elif user_choice.value > furryPlay or (furryPlay == 2 and user_choice.value == 0):
             await interaction.response.send_message(msg + "AWAWAWAWA 😿😿😿")
         else:
             await interaction.response.send_message(msg + "yayy 😸!")
