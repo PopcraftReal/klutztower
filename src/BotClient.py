@@ -9,6 +9,7 @@ from random import randint
 
 def get_random_msg():
     msgs = get_sounds()
+    print(msgs, len(msgs) - 1)
     if len(msgs) - 1 == 0:
         return "Boo!"
     i = randint(0, len(msgs) - 1)
