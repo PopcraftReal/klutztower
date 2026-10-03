@@ -20,8 +20,7 @@ async def init():
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
-        db=os.getenv("DATABASE"),
-        recycle=1800
+        db=os.getenv("DATABASE")
     ))
 
 async def load_all_schemas():
