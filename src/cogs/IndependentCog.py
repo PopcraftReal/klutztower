@@ -65,8 +65,8 @@ def createBatteryEmbed(user: User, status: BatteryStatus, level: int):
     """
     return embed
 
-def get_random_msg():
-    msgs = get_sounds()
+async def get_random_msg():
+    msgs = await get_sounds()
     if len(msgs) - 1 == 0:
         return "Boo!"
     i = randint(0, len(msgs) - 1)
@@ -111,7 +111,7 @@ class IndependentCog(Cog):
                           description='Fetch! Good doggie!')
     async def fetch(self, interaction: Interaction):
         await interaction.response.defer()
-        await interaction.followup.send(get_random_msg())
+        await interaction.followup.send(await get_random_msg())
     
     @app_commands.command(name='spr',
                           description='Play Scissors, Paper, Rock! with The Furry')
