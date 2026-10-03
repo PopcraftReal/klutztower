@@ -121,9 +121,7 @@ class IndependentCog(Cog):
     async def spr(self, interaction: Interaction, user_choice: Choice[int]):
         furryPlay = randint(0, 2)
         
-        msg = f"""
-        I played {SPR_CHOICES[furryPlay]}, and you played {user_choice.name}\n
-        """
+        msg = f"I played {SPR_CHOICES[furryPlay].name}, and you played {user_choice.name}\n\n"
         
         if user_choice.value == furryPlay:
             await interaction.response.send_message(msg + "Tie? 🙀")
