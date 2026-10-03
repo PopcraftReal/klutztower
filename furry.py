@@ -1,10 +1,17 @@
 import os
+import logging
+import sys
 
 import discord
 from dotenv import load_dotenv
 
-from src.database import init, load_all_schemas
 from src.BotClient import BotClient
+
+
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO
+)
 
 PREFIX = '-'
 intents = discord.Intents.all()
@@ -16,6 +23,4 @@ if __name__ == "__main__":
     token: str | None = os.getenv('DISCORD_TOKEN')
     if token is None:
         token = ""
-    init()
-    load_all_schemas()
     client.run(token)

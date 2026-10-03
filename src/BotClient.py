@@ -2,10 +2,14 @@ from discord import Message
 from discord.ext import commands
 from discord import Status
 
-from src.database import get_sounds
+from src.database import init, load_all_schemas, get_sounds
 from src.cogs.IndependentCog import IndependentCog
 from src.cogs.CocktowerCog import CocktowerCog
 from random import randint
+
+import logging
+
+logger = logging.getLogger()
 
 def get_random_msg():
     msgs = get_sounds()
@@ -19,16 +23,18 @@ def get_random_msg():
 class BotClient(commands.Bot):
     
     async def on_ready(self):
-        print("Add cogs...")
+        await init()
+        await load_all_schemas()
+        logger.info("Add cogs...")
         await self.add_cog(CocktowerCog())
         await self.add_cog(IndependentCog())
         
         print(f'Hello, I\'m ready! {self.user}')
         try:
             synced = await self.tree.sync()
-            print(f"Synced {len(synced)} command(s)")
+            logger.info(f"Synced {len(synced)} command(s)")
         except Exception as e:
-            print(f"Error syncing commands: {e}")
+            logger.info(f"Error syncing commands: {e}")
         
         self.fauxFriendId: int = 1554846323184898169
         self.correctSelfId: int = 1517883899458617474
