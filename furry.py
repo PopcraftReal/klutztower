@@ -1,12 +1,11 @@
-import os
 import logging
+import os
 import sys
 
 import discord
 from dotenv import load_dotenv
 
 from src.BotClient import BotClient
-
 
 logging.basicConfig(
     stream=sys.stdout,
