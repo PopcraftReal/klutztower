@@ -1,11 +1,10 @@
+import asyncio
+import logging
 import os
-
 from pathlib import Path
 from typing import cast
 
 import aiomysql as asql
-import logging
-import asyncio
 
 logger = logging.getLogger()
 
@@ -28,10 +27,14 @@ async def load_all_schemas():
     for file_path in SCHEMA_PATH.glob("*.sql"):
         await run_schema(str(file_path))
 
-async def run_schema(schema_file_path: str):
+def open_file(schema_file_path: str):
     with open(schema_file_path, 'r', encoding='utf-8') as file:
         schema_sql = file.read()
-        await execute_fetch(schema_sql)
+    return schema_sql
+
+async def run_schema(schema_file_path: str):
+    schema_sql = await asyncio.to_thread(open_file, schema_file_path)
+    await execute_fetch(schema_sql)
 
 async def get_connection():
     cnx = await cnx_pool.acquire()

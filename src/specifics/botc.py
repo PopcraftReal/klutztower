@@ -1,18 +1,16 @@
+import logging
 import re
 import urllib.request as req
 
 from bs4 import BeautifulSoup, Tag
-import logging
 
 logger = logging.getLogger()
 
 def clean(s: str):
     return re.sub("[-' ]", "", s.lower())
 
-
 def URLify(s: str):
     return re.sub(" ", "_", s)
-
 
 def retrieveImageURL(imageLink: str):
     try:
@@ -31,7 +29,6 @@ def retrieveImageURL(imageLink: str):
 
     return f"https://wiki.bloodontheclocktower.com{src.group()}"
 
-
 def title(s: str):
     s1: list[str] = s.split(' ')
     s2: list[str] = []
@@ -42,14 +39,13 @@ def title(s: str):
         s2.append('-'.join(s3))
     return ' '.join(s2)
 
-
 def getDescription(link: str):
     data = ""
     try:
         with req.urlopen(link) as response:
             data = response.read().decode('utf-8')
     except Exception:
-        logging.warning("WOOWOOWOO - Link doesn't work, check the script")
+        logger.warning("WOOWOOWOO - Link doesn't work, check the script")
         return ["", ""]
 
     parsed_html = BeautifulSoup(data, features='lxml')
@@ -65,14 +61,13 @@ def getDescription(link: str):
         return ["", ""]
     return returnedValues
 
-
 def getJinxes(link: str):
     data = ""
     try:
         with req.urlopen(link) as response:
             data = response.read().decode('utf-8')
     except Exception:
-        logging.warning("WOOWOOWOO - Link doesn't work, check the script")
+        logger.warning("WOOWOOWOO - Link doesn't work, check the script")
         return []
 
     parsed_html = BeautifulSoup(data, features='lxml')

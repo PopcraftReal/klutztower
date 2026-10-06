@@ -1,13 +1,12 @@
 from datetime import datetime
 from enum import Enum
+from math import inf
 from random import randint
 from zoneinfo import ZoneInfo
-from math import inf
 
-from discord import ChannelType, Colour, Embed, Interaction, User
-from discord import app_commands
-from discord.ext.commands import Cog
+from discord import ChannelType, Colour, Embed, Interaction, User, app_commands
 from discord.app_commands import Choice
+from discord.ext.commands import Cog
 
 from src.database import get_sounds
 
@@ -24,7 +23,7 @@ class BatteryStatus(Enum):
     STATUS_WORLDENDING = "The user is dead due to a lack of socialising"
     STATUS_CANT_ELABORATE = "The user hasn't sent a text in the last 500 texts. I think they're dead"
 
-def cap(val: int | float, min: int | float = -inf, max: int | float = inf):
+def cap(val: float, min: float = -inf, max: float = inf):
     if val < min:
         return min
     if val > max:

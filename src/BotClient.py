@@ -1,13 +1,12 @@
-from discord import Message
-from discord.ext import commands
-from discord import Status
-
-from src.database import init, load_all_schemas, get_sounds
-from src.cogs.IndependentCog import IndependentCog
-from src.cogs.CocktowerCog import CocktowerCog
+import logging
 from random import randint
 
-import logging
+from discord import Message, Status
+from discord.ext import commands
+
+from src.cogs.CocktowerCog import CocktowerCog
+from src.cogs.IndependentCog import IndependentCog
+from src.database import get_sounds, init, load_all_schemas
 
 logger = logging.getLogger()
 
