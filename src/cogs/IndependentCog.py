@@ -130,9 +130,19 @@ class IndependentCog(Cog):
         else:
             await interaction.response.send_message(msg + "yayy 😸!")
     
+    async def add_one_meme(self, interaction, to_add: Attachment):
+        meme_name = to_add.filename
+        meme_data = await to_add.read()
+        result = await add_meme(meme_name, meme_data)
+        
+        if result:
+            await interaction.followup.send(f"Now I'll remember this meme called {meme_name}")
+        else:
+            await interaction.followup.send(f"I can't remember this meme called {meme_name} for some reasons :<")
+    
     @app_commands.command(name='meme',
                           description='Get gay meme')
-    async def meme(self, interaction: Interaction, to_add: Attachment | None = None):
+    async def meme(self, interaction: Interaction, *to_add: Attachment):
         await interaction.response.defer()
         if to_add is None:
             meme_ids = await get_meme_ids()
@@ -155,11 +165,5 @@ class IndependentCog(Cog):
             
             await interaction.followup.send(file=imgFile)
         else:
-            meme_name = to_add.filename
-            meme_data = await to_add.read()
-            result = await add_meme(meme_name, meme_data)
-            
-            if result:
-                await interaction.followup.send(f"Now I'll remember this meme called {meme_name}")
-            else:
-                await interaction.followup.send(f"I can't remember this meme called {meme_name} for some reasons :<")
+            for attach in to_add:
+                await self.add_one_meme(interaction, attach)
