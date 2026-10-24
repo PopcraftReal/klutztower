@@ -1,9 +1,14 @@
 from datetime import datetime
 from enum import Enum
+from math import inf
+from random import randint
 from zoneinfo import ZoneInfo
 
-from discord import ChannelType, Colour, Embed, Interaction, app_commands, User
+from discord import ChannelType, Colour, Embed, Interaction, User, app_commands
+from discord.app_commands import Choice
 from discord.ext.commands import Cog
+
+from src.database import get_sounds
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 
@@ -15,8 +20,15 @@ class BatteryStatus(Enum):
     STATUS_HAPPY = "The user is happy with sufficient interaction"
     STATUS_DEPLETING = "The user is feeling rather down with interactions stop"
     STATUS_CRASHING = "The user is rather crashing because of self-isolation"
-    STATUS_WORLDENDING = "The user is dead"
+    STATUS_WORLDENDING = "The user is dead due to a lack of socialising"
     STATUS_CANT_ELABORATE = "The user hasn't sent a text in the last 500 texts. I think they're dead"
+
+def cap(val: float, min: float = -inf, max: float = inf):
+    if val < min:
+        return min
+    if val > max:
+        return max
+    return val
 
 def getBatteryVisual(level: int) -> str:
     if level == -1:
@@ -52,6 +64,19 @@ def createBatteryEmbed(user: User, status: BatteryStatus, level: int):
     """
     return embed
 
+async def get_random_msg():
+    msgs = await get_sounds()
+    if len(msgs) - 1 == 0:
+        return "Boo!"
+    i = randint(0, len(msgs) - 1)
+    return msgs[i]
+
+SPR_CHOICES = [
+    Choice(name="✂️", value=0),
+    Choice(name="🪨", value=1),
+    Choice(name="📰", value=2)
+]
+
 class IndependentCog(Cog):
     
     @app_commands.command(name="battery",
@@ -73,10 +98,33 @@ class IndependentCog(Cog):
             
             if send_time is not None:
                 now = datetime.now(SYDNEY)
-                difference = 12 - ((now - send_time.astimezone(SYDNEY)).seconds // 3600)
-                status = getStatus(difference)
+                difference = cap(12 - ((now - send_time.astimezone(SYDNEY)).total_seconds() // 3600), 0, 12)
+                status = getStatus(int(difference))
             
-            embed = createBatteryEmbed(user, status, difference)
+            embed = createBatteryEmbed(user, status, int(difference))
             await interaction.followup.send(embed=embed)
         else:
             await interaction.followup.send("This makes no sense to me :3")
+    
+    @app_commands.command(name='fetch',
+                          description='Fetch! Good doggie!')
+    async def fetch(self, interaction: Interaction):
+        await interaction.response.defer()
+        await interaction.followup.send(await get_random_msg())
+    
+    @app_commands.command(name='spr',
+                          description='Play Scissors, Paper, Rock! with The Furry')
+    @app_commands.choices(
+        user_choice = SPR_CHOICES
+    )
+    async def spr(self, interaction: Interaction, user_choice: Choice[int]):
+        furryPlay = randint(0, 2)
+        
+        msg = f"I played {SPR_CHOICES[furryPlay].name}, and you played {user_choice.name}\n\n"
+        
+        if user_choice.value == furryPlay:
+            await interaction.response.send_message(msg + "Tie? 🙀")
+        elif user_choice.value > furryPlay or (furryPlay == 2 and user_choice.value == 0):
+            await interaction.response.send_message(msg + "AWAWAWAWA 😿😿😿")
+        else:
+            await interaction.response.send_message(msg + "yayy 😸!")

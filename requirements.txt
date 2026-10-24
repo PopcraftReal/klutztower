@@ -2,5 +2,5 @@ discord.py
 python-dotenv
 lxml
 beautifulsoup4
-mysql-connector-python
+aiomysql
 tzdata

@@ -1,34 +1,33 @@
+import logging
 import re
 import urllib.request as req
 
 from bs4 import BeautifulSoup, Tag
 
+logger = logging.getLogger()
 
 def clean(s: str):
     return re.sub("[-' ]", "", s.lower())
 
-
 def URLify(s: str):
     return re.sub(" ", "_", s)
-
 
 def retrieveImageURL(imageLink: str):
     try:
         imageResponse = req.urlopen(imageLink).read().decode('utf-8')
     except Exception:
-        print("can't load")
+        logger.warning("can't load")
         return ""
 
     src = re.search('<a href="(/images/.+\\.png)">', imageResponse)
     if src is None:
-        print("no link provided")
+        logger.warning("no link provided")
         return ""
     src = re.search('/images/.+\\.png', src.group())
     if src is None:
         return ""
 
     return f"https://wiki.bloodontheclocktower.com{src.group()}"
-
 
 def title(s: str):
     s1: list[str] = s.split(' ')
@@ -40,14 +39,13 @@ def title(s: str):
         s2.append('-'.join(s3))
     return ' '.join(s2)
 
-
 def getDescription(link: str):
     data = ""
     try:
         with req.urlopen(link) as response:
             data = response.read().decode('utf-8')
     except Exception:
-        print("WOOWOOWOO - Link doesn't work, check the script")
+        logger.warning("WOOWOOWOO - Link doesn't work, check the script")
         return ["", ""]
 
     parsed_html = BeautifulSoup(data, features='lxml')
@@ -63,14 +61,13 @@ def getDescription(link: str):
         return ["", ""]
     return returnedValues
 
-
 def getJinxes(link: str):
     data = ""
     try:
         with req.urlopen(link) as response:
             data = response.read().decode('utf-8')
     except Exception:
-        print("WOOWOOWOO - Link doesn't work, check the script")
+        logger.warning("WOOWOOWOO - Link doesn't work, check the script")
         return []
 
     parsed_html = BeautifulSoup(data, features='lxml')
