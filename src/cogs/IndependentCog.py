@@ -139,9 +139,12 @@ class IndependentCog(Cog):
             if memeCount == 0:
                 return await interaction.followup.send("No meme is found :<, I need more memes")
             randomId = randint(1, memeCount)
-            imgBytes = await get_meme(randomId)
+            meme_result = await get_meme(randomId)
+            imgName = meme_result[0]
+            imgBytes = meme_result[1]
+            
             data = io.BytesIO(imgBytes)
-            imgFile = File(fp=data, filename="sentMeme.png")
+            imgFile = File(fp=data, filename=imgName)
             
             await interaction.followup.send(file=imgFile)
         else:
