@@ -86,20 +86,20 @@ async def add_sound(sound: str):
 async def remove_sound(sound: str):
     await execute_fetch("DELETE FROM furry_sound WHERE sound=%s;", sound)
 
-async def get_memes_count():
+async def get_meme_ids():
     data: list[tuple[int]] = cast(list[tuple[int]], await execute_fetch("SELECT * FROM memes;"))
     if data is None:
         return 0
-    return len(data)
+    return [s[0] for s in data]
 
 async def get_meme(id: int):
-    data: list[tuple[bytes]] = cast(list[tuple[bytes]], await execute_fetch(f"SELECT meme_name, meme_data FROM memes WHERE id={id};"))
+    data: list[tuple[str, bytes]] = cast(list[tuple[str, bytes]], await execute_fetch("SELECT meme_name, meme_data FROM memes WHERE id=%s;", id))
     if data is None:
-        return bytes(0)
+        return "", bytes(0)
     if len(data) == 0:
-        return bytes(0)
+        return "", bytes(0)
     return data[0]
 
 async def add_meme(file_name: str, file_data: bytes):
-    result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, bytearray(file_data))
+    result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, file_data)
     return result is not None

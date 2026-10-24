@@ -4,3 +4,4 @@ lxml
 beautifulsoup4
 aiomysql
 tzdata
+PyMySQL==1.1.1

@@ -9,7 +9,7 @@ from discord import Attachment, ChannelType, Colour, Embed, File, Interaction, U
 from discord.app_commands import Choice
 from discord.ext.commands import Cog
 
-from src.database import add_meme, get_meme, get_memes_count, get_sounds
+from src.database import add_meme, get_meme, get_meme_ids, get_sounds
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 
@@ -135,11 +135,16 @@ class IndependentCog(Cog):
     async def meme(self, interaction: Interaction, to_add: Attachment | None = None):
         await interaction.response.defer()
         if to_add is None:
-            memeCount = await get_memes_count()
+            meme_ids = await get_meme_ids()
+            
+            memeCount = len(meme_ids)
             if memeCount == 0:
                 return await interaction.followup.send("No meme is found :<, I need more memes")
-            randomId = randint(1, memeCount)
-            meme_result = await get_meme(randomId)
+            if memeCount == 1:
+                randomId = 0
+            else:
+                randomId = randint(0, memeCount - 1)
+            meme_result = await get_meme(meme_ids[randomId])
             imgName = meme_result[0]
             imgBytes = meme_result[1]
             
