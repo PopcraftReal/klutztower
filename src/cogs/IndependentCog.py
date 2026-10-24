@@ -3,12 +3,13 @@ from enum import Enum
 from math import inf
 from random import randint
 from zoneinfo import ZoneInfo
+import io
 
-from discord import ChannelType, Colour, Embed, Interaction, User, app_commands
+from discord import Attachment, ChannelType, Colour, Embed, File, Interaction, User, app_commands
 from discord.app_commands import Choice
 from discord.ext.commands import Cog
 
-from src.database import get_sounds
+from src.database import add_meme, get_meme, get_memes_count, get_sounds
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 
@@ -128,3 +129,27 @@ class IndependentCog(Cog):
             await interaction.response.send_message(msg + "AWAWAWAWA 😿😿😿")
         else:
             await interaction.response.send_message(msg + "yayy 😸!")
+    
+    @app_commands.command(name='meme',
+                          description='Get gay meme')
+    async def meme(self, interaction: Interaction, to_add: Attachment | None = None):
+        await interaction.response.defer()
+        if to_add is None:
+            memeCount = await get_memes_count()
+            if memeCount == 0:
+                return await interaction.followup.send("No meme is found :<, I need more memes")
+            randomId = randint(1, memeCount)
+            imgBytes = await get_meme(randomId)
+            data = io.BytesIO(imgBytes)
+            imgFile = File(fp=data, filename="sentMeme.png")
+            
+            await interaction.followup.send(file=imgFile)
+        else:
+            meme_name = to_add.filename
+            meme_data = await to_add.read()
+            result = await add_meme(meme_name, meme_data)
+            
+            if result:
+                await interaction.followup.send(f"Now I'll remember this meme called {meme_name}")
+            else:
+                await interaction.followup.send(f"I can't remember this meme called {meme_name} for some reasons :<")

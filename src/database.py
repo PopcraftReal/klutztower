@@ -45,11 +45,11 @@ async def get_connection():
         cnx = await cnx_pool.acquire()
     return cnx
 
-async def __fetch(prompt: str, cursor: asql.Cursor):
-    await cursor.execute(prompt)
+async def __fetch(cursor: asql.Cursor, prompt: str, *args):
+    await cursor.execute(prompt, args)
     return await cursor.fetchall()
 
-async def execute_fetch(prompt: str):
+async def execute_fetch(prompt: str, *args):
     assert cnx_pool is not None
     connection = None
     try:
@@ -59,7 +59,7 @@ async def execute_fetch(prompt: str):
             async with connection.cursor() as _cur:
                 cursor = cast(asql.Cursor, _cur)
                 result = await asyncio.wait_for(
-                    __fetch(prompt, cursor),
+                    __fetch(cursor, prompt, *args),
                     timeout=10
                 )
             await connection.commit()
@@ -81,7 +81,25 @@ async def get_sounds() -> list[str]:
     return [s[0] for s in data]
 
 async def add_sound(sound: str):
-    await execute_fetch(f"INSERT IGNORE INTO furry_sound VALUES ('{sound}');")
+    await execute_fetch("INSERT IGNORE INTO furry_sound VALUES (%s);", sound)
 
 async def remove_sound(sound: str):
-    await execute_fetch(f"DELETE FROM furry_sound WHERE sound='{sound}';")
+    await execute_fetch("DELETE FROM furry_sound WHERE sound=%s;", sound)
+
+async def get_memes_count():
+    data: list[tuple[int]] = cast(list[tuple[int]], await execute_fetch("SELECT * FROM memes;"))
+    if data is None:
+        return 0
+    return len(data)
+
+async def get_meme(id: int):
+    data: list[tuple[bytes]] = cast(list[tuple[bytes]], await execute_fetch(f"SELECT meme_data FROM memes WHERE id={id};"))
+    if data is None:
+        return bytes(0)
+    if len(data) == 0:
+        return bytes(0)
+    return data[0][0]
+
+async def add_meme(file_name: str, file_data: bytes):
+    result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, bytearray(file_data))
+    return result is not None
