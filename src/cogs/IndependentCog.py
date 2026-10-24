@@ -140,7 +140,7 @@ class IndependentCog(Cog):
             return [Choice(name=m[1], value=str(m[0])) for m in memes]
 
         async def transform(self, interaction: Interaction, value: str) -> Any:
-            return await get_meme(int(value))
+            return int(value)
     
     @app_commands.command(name='meme',
                           description='Get gay meme')
@@ -172,7 +172,6 @@ class IndependentCog(Cog):
                 randomId = randint(0, memeCount - 1)
             meme_result = await get_meme(meme_ids[randomId])
         imgName = meme_result[0]
-        print(imgName)
         imgBytes = meme_result[1]
         
         data = io.BytesIO(imgBytes)

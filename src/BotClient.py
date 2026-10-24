@@ -38,7 +38,8 @@ class BotClient(commands.Bot):
         self.correctSelfId: int = 1517883899458617474
     
     async def on_message(self, message: Message) -> None:
-        assert self.user is not None
+        if self.user is None or self.__getattribute__("correctSelfId") is None:
+            return
         if self.user.mentioned_in(message):
             await message.channel.send(await get_random_msg())
         
