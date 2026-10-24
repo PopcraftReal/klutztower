@@ -93,12 +93,12 @@ async def get_memes_count():
     return len(data)
 
 async def get_meme(id: int):
-    data: list[tuple[bytes]] = cast(list[tuple[bytes]], await execute_fetch(f"SELECT meme_data FROM memes WHERE id={id};"))
+    data: list[tuple[bytes]] = cast(list[tuple[bytes]], await execute_fetch(f"SELECT meme_name, meme_data FROM memes WHERE id={id};"))
     if data is None:
         return bytes(0)
     if len(data) == 0:
         return bytes(0)
-    return data[0][0]
+    return data[0]
 
 async def add_meme(file_name: str, file_data: bytes):
     result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, bytearray(file_data))
