@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS memes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    meme_name VARCHAR(255),
+    meme_data LONGBLOB
+);
