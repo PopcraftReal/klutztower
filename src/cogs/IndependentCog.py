@@ -154,8 +154,6 @@ class IndependentCog(Cog):
                 randomId = 0
             else:
                 randomId = randint(0, memeCount - 1)
-                print(memeCount)
-                print(randomId)
             meme_result = await get_meme(meme_ids[randomId])
             imgName = meme_result[0]
             imgBytes = meme_result[1]
