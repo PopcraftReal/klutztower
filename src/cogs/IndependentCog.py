@@ -2,14 +2,15 @@ from datetime import datetime
 from enum import Enum
 from math import inf
 from random import randint
+from typing import Any, List
 from zoneinfo import ZoneInfo
 import io
 
 from discord import Attachment, ChannelType, Colour, Embed, File, Interaction, User, app_commands
-from discord.app_commands import Choice
+from discord.app_commands import Choice, Transform, Transformer
 from discord.ext.commands import Cog
 
-from src.database import add_meme, get_meme, get_meme_ids, get_sounds
+from src.database import add_meme, get_meme, get_meme_by_name, get_meme_ids, get_sounds
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 
@@ -130,11 +131,36 @@ class IndependentCog(Cog):
         else:
             await interaction.response.send_message(msg + "yayy 😸!")
     
+    class MemeTransformer(Transformer):
+        
+        async def autocomplete(self, interaction: Interaction, current: int | float | str) -> List[Choice[str | int | float]]:
+            current = str(current)
+            memes = (await get_meme_by_name(current))[:25]
+            
+            return [Choice(name=m[1], value=str(m[0])) for m in memes]
+
+        async def transform(self, interaction: Interaction, value: str) -> Any:
+            return await get_meme(int(value))
+    
     @app_commands.command(name='meme',
                           description='Get gay meme')
-    async def meme(self, interaction: Interaction, to_add: Attachment | None = None):
+    async def meme(self, interaction: Interaction, to_add: Attachment | None = None, name: Transform[int, MemeTransformer] | None = None):
         await interaction.response.defer()
-        if to_add is None:
+        if to_add is not None:
+            meme_name = to_add.filename
+            if len(meme_name) > 1024:
+                return await interaction.followup.send("This meme's name is too long for me to remember. So evil :<")
+            meme_data = await to_add.read()
+            result = await add_meme(meme_name, meme_data)
+            
+            if result:
+                await interaction.followup.send(f"Now I'll remember this meme called {meme_name}")
+            else:
+                await interaction.followup.send(f"I can't remember this meme called {meme_name} for some reasons :<")
+            return
+        elif name is not None:
+            meme_result = await get_meme(name)
+        else:
             meme_ids = await get_meme_ids()
             
             memeCount = len(meme_ids)
@@ -145,19 +171,10 @@ class IndependentCog(Cog):
             else:
                 randomId = randint(0, memeCount - 1)
             meme_result = await get_meme(meme_ids[randomId])
-            imgName = meme_result[0]
-            imgBytes = meme_result[1]
-            
-            data = io.BytesIO(imgBytes)
-            imgFile = File(fp=data, filename=imgName)
-            
-            await interaction.followup.send(file=imgFile)
-        else:
-            meme_name = to_add.filename
-            meme_data = await to_add.read()
-            result = await add_meme(meme_name, meme_data)
-            
-            if result:
-                await interaction.followup.send(f"Now I'll remember this meme called {meme_name}")
-            else:
-                await interaction.followup.send(f"I can't remember this meme called {meme_name} for some reasons :<")
+        imgName = meme_result[0]
+        imgBytes = meme_result[1]
+        
+        data = io.BytesIO(imgBytes)
+        imgFile = File(fp=data, filename=imgName)
+        
+        await interaction.followup.send(file=imgFile)

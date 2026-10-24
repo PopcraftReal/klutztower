@@ -103,3 +103,9 @@ async def get_meme(id: int):
 async def add_meme(file_name: str, file_data: bytes):
     result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, file_data)
     return result is not None
+
+async def get_meme_by_name(name: str):
+    data: list[tuple[int, str]] = cast(list[tuple[int, str]], await execute_fetch("SELECT id, meme_name FROM memes WHERE meme_name REGEXP %s", name))
+    if data is None:
+        return []
+    return data
