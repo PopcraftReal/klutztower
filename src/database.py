@@ -87,9 +87,9 @@ async def remove_sound(sound: str):
     await execute_fetch("DELETE FROM furry_sound WHERE sound=%s;", sound)
 
 async def get_meme_ids():
-    data: list[tuple[int]] = cast(list[tuple[int]], await execute_fetch("SELECT * FROM memes;"))
+    data: list[tuple[int]] = cast(list[tuple[int]], await execute_fetch("SELECT id FROM memes;"))
     if data is None:
-        return 0
+        return []
     return [s[0] for s in data]
 
 async def get_meme(id: int):
