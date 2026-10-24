@@ -132,7 +132,7 @@ class IndependentCog(Cog):
     
     @app_commands.command(name='meme',
                           description='Get gay meme')
-    async def meme(self, interaction: Interaction, to_add: Attachment):
+    async def meme(self, interaction: Interaction, to_add: Attachment | None = None):
         await interaction.response.defer()
         if to_add is None:
             meme_ids = await get_meme_ids()
