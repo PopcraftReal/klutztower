@@ -6,17 +6,19 @@ from typing import Any, List
 from zoneinfo import ZoneInfo
 import io
 
-from discord import Attachment, ChannelType, Colour, Embed, File, Interaction, User, app_commands
+from discord import AllowedMentions, Attachment, ChannelType, Colour, Embed, File, Interaction, Member, Role, User, app_commands
 from discord.app_commands import Choice, Transform, Transformer
 from discord.ext.commands import Cog
 
-from src.database import add_meme, get_meme, get_meme_by_name, get_meme_ids, get_sounds
+from src.database import add_meme, get_birthday_by_person, get_meme, get_meme_by_name, get_meme_ids, get_sounds, remove_birthday, set_birthday
 
 SYDNEY = ZoneInfo("Australia/Sydney")
 
 LEVEL_1 = 3
 LEVEL_2 = 6
 LEVEL_3 = 9
+
+BIRTHDAY_ROLE = 1563925239052636200
 
 class BatteryStatus(Enum):
     STATUS_HAPPY = "The user is happy with sufficient interaction"
@@ -72,6 +74,15 @@ async def get_random_msg():
         return "Boo!"
     i = randint(0, len(msgs) - 1)
     return msgs[i]
+
+async def check_birthday(birthday: datetime, member: Member, birthday_role: Role):
+    currentTime = datetime.now().astimezone(SYDNEY)
+    currentDay = currentTime.day
+    currentMonth = currentTime.month
+    if currentDay == birthday.day and currentMonth == birthday.month:
+        await member.add_roles(birthday_role)
+    else:
+        await member.remove_roles(birthday_role)
 
 SPR_CHOICES = [
     Choice(name="✂️", value=0),
@@ -178,3 +189,33 @@ class IndependentCog(Cog):
         imgFile = File(fp=data, filename=imgName)
         
         await interaction.followup.send(file=imgFile)
+        
+    @app_commands.command(name='birthday',
+                          description='Add your birthday')
+    async def birthday(self, interaction: Interaction, user: User | None = None, date: datetime | None = None, to_remove: bool = False):
+        await interaction.response.defer()
+        
+        if to_remove:
+            user_id = interaction.user.id
+            await remove_birthday(user_id)
+            return await interaction.followup.send("I'll forget your borthdate")
+        if date is not None:
+            normalised_date = date.astimezone(SYDNEY)
+            user_id = interaction.user.id
+            await set_birthday(user_id, normalised_date)
+            if interaction.user is Member and interaction.guild is not None and (birthday_role := interaction.guild.get_role(BIRTHDAY_ROLE)) is not None:
+                await check_birthday(normalised_date, interaction.user, birthday_role)
+            await interaction.followup.send("I'll remember your borthdate")
+            return await interaction.followup.send(f"Just to double check, it's {normalised_date.strftime("%d/%m/%Y")} that I'll remember :>", ephemeral=True)
+        if user is not None:
+            user_id = user.id
+            d = await get_birthday_by_person(user_id)
+            if d is None:
+                return await interaction.followup.send(f"{user.mention} is mysterious :3", allowed_mentions=AllowedMentions.none())
+            return await interaction.followup.send(f"{user.mention}'s borth is {d.astimezone(SYDNEY).strftime("%d/%m")}", allowed_mentions=AllowedMentions.none())
+        
+        user_id = interaction.user.id
+        d = await get_birthday_by_person(user_id)
+        if d is None:
+                return await interaction.followup.send("You are mysterious :3")
+        return await interaction.followup.send(f"Your borth is {d.astimezone(SYDNEY).strftime("%d/%m")}")

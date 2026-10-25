@@ -7,8 +7,8 @@ from discord import File, Interaction, Message, Status, app_commands
 from discord.ext import commands, tasks
 
 from src.cogs.CocktowerCog import CocktowerCog
-from src.cogs.IndependentCog import IndependentCog
-from src.database import get_sounds, init, load_all_schemas
+from src.cogs.IndependentCog import BIRTHDAY_ROLE, SYDNEY, IndependentCog, check_birthday
+from src.database import get_birthday_by_person, get_sounds, init, load_all_schemas
 
 logger = logging.getLogger()
 
@@ -18,7 +18,6 @@ async def get_random_msg():
         return "Boo!"
     i = randint(0, len(msgs) - 1)
     return msgs[i]
-
 
 class BotClient(commands.Bot):
     
@@ -59,11 +58,6 @@ class BotClient(commands.Bot):
             else:
                 await message.channel.send("My fwiend is not here :<")
     
-    async def on_command_error(self, context: commands.Context, exception: commands.CommandError) -> None:
-        await context.send("I'm crashing!")
-        print(exception)
-        return
-    
     async def on_app_command_error(self, interaction: Interaction, error: app_commands.AppCommandError) -> None:
         await interaction.response.defer()
         tb = "".join(traceback.format_exception(type(error), error, error.__traceback__))
@@ -79,4 +73,9 @@ class BotClient(commands.Bot):
     async def birthday_check(self):
         await self.wait_until_ready()
         
-        
+        if (main_server := self.get_guild(1093713117369868312)) and (birthday_role := main_server.get_role(BIRTHDAY_ROLE)):
+            for member in main_server.members:
+                user_id = member.id
+                d = await get_birthday_by_person(user_id)
+                if d is not None:
+                    await check_birthday(d.astimezone(SYDNEY), member, birthday_role)
