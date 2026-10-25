@@ -79,7 +79,6 @@ async def check_birthday(birthday: date, member: Member, birthday_role: Role):
     currentTime = date.today()
     currentDay = currentTime.day
     currentMonth = currentTime.month
-    print("This works here")
     if currentDay == birthday.day and currentMonth == birthday.month:
         await member.add_roles(birthday_role)
     else:
