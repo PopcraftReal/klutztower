@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import aiomysql as asql
 
@@ -45,11 +45,11 @@ async def get_connection():
         cnx = await cnx_pool.acquire()
     return cnx
 
-async def __fetch(cursor: asql.Cursor, prompt: str, *args):
+async def __fetch[T](cursor: asql.Cursor, prompt: str, *args, _type: type[T] = tuple[Any]) -> list[T]:
     await cursor.execute(prompt, args)
     return await cursor.fetchall()
 
-async def execute_fetch(prompt: str, *args):
+async def execute_fetch[T](prompt: str, *args, _type: type[T] = tuple[Any]) -> list[T] | None:
     assert cnx_pool is not None
     connection = None
     try:
@@ -59,7 +59,7 @@ async def execute_fetch(prompt: str, *args):
             async with connection.cursor() as _cur:
                 cursor = cast(asql.Cursor, _cur)
                 result = await asyncio.wait_for(
-                    __fetch(cursor, prompt, *args),
+                    __fetch(cursor, prompt, *args, _type=_type),
                     timeout=10
                 )
             await connection.commit()
@@ -75,7 +75,7 @@ async def execute_fetch(prompt: str, *args):
     return result
 
 async def get_sounds() -> list[str]:
-    data: list[tuple[str]] = cast(list[tuple[str]], await execute_fetch("SELECT * FROM furry_sound;"))
+    data = await execute_fetch("SELECT * FROM furry_sound;", _type = tuple[str])
     if data is None:
         return []
     return [s[0] for s in data]
@@ -86,26 +86,32 @@ async def add_sound(sound: str):
 async def remove_sound(sound: str):
     await execute_fetch("DELETE FROM furry_sound WHERE sound=%s;", sound)
 
-async def get_meme_ids():
-    data: list[tuple[int]] = cast(list[tuple[int]], await execute_fetch("SELECT id FROM memes;"))
+async def get_meme_ids() -> list[int]:
+    prompt = "SELECT id FROM memes;"
+    
+    data = await execute_fetch(prompt, _type = tuple[int])
     if data is None:
         return []
     return [s[0] for s in data]
 
-async def get_meme(id: int):
-    data: list[tuple[str, bytes]] = cast(list[tuple[str, bytes]], await execute_fetch("SELECT meme_name, meme_data FROM memes WHERE id=%s;", id))
+async def get_meme(id: int) -> tuple[str, bytes]:
+    prompt = "SELECT meme_name, meme_data FROM memes WHERE id=%s;"
+    
+    data = await execute_fetch(prompt, id, _type = tuple[str, bytes])
     if data is None:
         return "", bytes(0)
     if len(data) == 0:
         return "", bytes(0)
     return data[0]
 
-async def add_meme(file_name: str, file_data: bytes):
-    result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, file_data)
-    return result is not None
-
-async def get_meme_by_name(name: str):
-    data: list[tuple[int, str]] = cast(list[tuple[int, str]], await execute_fetch("SELECT id, meme_name FROM memes WHERE meme_name REGEXP %s", name))
+async def get_meme_by_name(name: str) -> list[tuple[int, str]]:
+    prompt = "SELECT id, meme_name FROM memes WHERE meme_name REGEXP %s"
+    
+    data = await execute_fetch(prompt, name, _type=tuple[int, str])
     if data is None:
         return []
     return data
+
+async def add_meme(file_name: str, file_data: bytes):
+    result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, file_data)
+    return result is not None
