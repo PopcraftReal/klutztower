@@ -208,8 +208,8 @@ class IndependentCog(Cog):
             normalised_date = date_dt.astimezone(SYDNEY)
             user_id = interaction.user.id
             await set_birthday(user_id, normalised_date)
-            if interaction.user is Member and interaction.guild is not None and (birthday_role := interaction.guild.get_role(BIRTHDAY_ROLE)) is not None:
-                await check_birthday(normalised_date, interaction.user, birthday_role)
+            if interaction.guild is not None and (birthday_role := interaction.guild.get_role(BIRTHDAY_ROLE)) is not None and (member := interaction.guild.get_member(user_id)):
+                await check_birthday(normalised_date, member, birthday_role)
             await interaction.followup.send("I'll remember your borthdate")
             return await interaction.followup.send(f"Just to double check, it's {normalised_date.strftime("%d/%m/%Y")} that I'll remember :>", ephemeral=True)
         if user is not None:
