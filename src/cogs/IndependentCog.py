@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from math import inf
 from random import randint
@@ -75,8 +75,8 @@ async def get_random_msg():
     i = randint(0, len(msgs) - 1)
     return msgs[i]
 
-async def check_birthday(birthday: datetime, member: Member, birthday_role: Role):
-    currentTime = datetime.now().astimezone(SYDNEY)
+async def check_birthday(birthday: date, member: Member, birthday_role: Role):
+    currentTime = date.today()
     currentDay = currentTime.day
     currentMonth = currentTime.month
     print("This works here")
@@ -202,25 +202,24 @@ class IndependentCog(Cog):
             return await interaction.followup.send("I'll forget your borthdate")
         if date is not None:
             try:
-                date_dt = datetime.strptime(date, "%d/%m/%Y")
+                date_d = datetime.strptime(date, "%d/%m/%Y").date()
             except ValueError:
                 return await interaction.followup.send("Naur, use dd/mm/yyyy")
-            normalised_date = date_dt.astimezone(SYDNEY)
             user_id = interaction.user.id
-            await set_birthday(user_id, normalised_date)
+            await set_birthday(user_id, date_d)
             if interaction.guild is not None and (birthday_role := interaction.guild.get_role(BIRTHDAY_ROLE)) is not None and (member := interaction.guild.get_member(user_id)):
-                await check_birthday(normalised_date, member, birthday_role)
+                await check_birthday(date_d, member, birthday_role)
             await interaction.followup.send("I'll remember your borthdate")
-            return await interaction.followup.send(f"Just to double check, it's {normalised_date.strftime("%d/%m/%Y")} that I'll remember :>", ephemeral=True)
+            return await interaction.followup.send(f"Just to double check, it's {date_d.strftime("%d/%m/%Y")} that I'll remember :>", ephemeral=True)
         if user is not None:
             user_id = user.id
             d = await get_birthday_by_person(user_id)
             if d is None:
                 return await interaction.followup.send(f"{user.mention} is mysterious :3", allowed_mentions=AllowedMentions.none())
-            return await interaction.followup.send(f"{user.mention}'s borth is {d.astimezone(SYDNEY).strftime("%d/%m")}", allowed_mentions=AllowedMentions.none())
+            return await interaction.followup.send(f"{user.mention}'s borth is {d.strftime("%d/%m")}", allowed_mentions=AllowedMentions.none())
         
         user_id = interaction.user.id
         d = await get_birthday_by_person(user_id)
         if d is None:
                 return await interaction.followup.send("You are mysterious :3")
-        return await interaction.followup.send(f"Your borth is {d.astimezone(SYDNEY).strftime("%d/%m")}")
+        return await interaction.followup.send(f"Your borth is {d.strftime("%d/%m")}")

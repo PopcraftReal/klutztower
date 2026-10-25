@@ -7,7 +7,7 @@ from discord import File, Interaction, Message, Status, app_commands
 from discord.ext import commands, tasks
 
 from src.cogs.CocktowerCog import CocktowerCog
-from src.cogs.IndependentCog import BIRTHDAY_ROLE, SYDNEY, IndependentCog, check_birthday
+from src.cogs.IndependentCog import BIRTHDAY_ROLE, IndependentCog, check_birthday
 from src.database import get_birthday_by_person, get_sounds, init, load_all_schemas
 
 logger = logging.getLogger()
@@ -78,4 +78,4 @@ class BotClient(commands.Bot):
                 user_id = member.id
                 d = await get_birthday_by_person(user_id)
                 if d is not None:
-                    await check_birthday(d.astimezone(SYDNEY), member, birthday_role)
+                    await check_birthday(d, member, birthday_role)

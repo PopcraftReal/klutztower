@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import date
 import logging
 import os
 from pathlib import Path
@@ -117,7 +117,7 @@ async def add_meme(file_name: str, file_data: bytes):
     result = await execute_fetch("INSERT IGNORE INTO memes (id, meme_name, meme_data) VALUES (NULL, %s, %s)", file_name, file_data)
     return result is not None
 
-async def get_people_by_birthday(birthdate: datetime):
+async def get_people_by_birthday(birthdate: date):
     prompt = "SELECT user FROM birthday WHERE birthdate = %s"
     
     bd = birthdate.strftime('%Y-%m-%d')
@@ -132,14 +132,14 @@ async def get_people_by_birthday(birthdate: datetime):
 async def get_birthday_by_person(user_id: int):
     prompt = "SELECT birthdate FROM birthday WHERE user = %s"
     
-    data = await execute_fetch(prompt, user_id, _type = tuple[datetime])
+    data = await execute_fetch(prompt, user_id, _type = tuple[date])
     if data is None:
         return None
     if len(data) == 0:
         return None
     return data[0][0]
 
-async def set_birthday(user_id: int, birthdate: datetime):
+async def set_birthday(user_id: int, birthdate: date):
     bd = birthdate.strftime('%Y-%m-%d')
     await execute_fetch("INSERT INTO birthday (user, birthdate) VALUES (%s, %s) ON DUPLICATE KEY UPDATE birthdate=%s", user_id, bd, bd)
 
