@@ -2,6 +2,8 @@ CREATE TABLE IF NOT EXISTS furry_sound (
     sound varchar(256) PRIMARY KEY
 );
 
+ALTER TABLE furry_sound ADD COLUMN IF NOT EXISTS sound varchar(256) PRIMARY KEY;
+
 INSERT IGNORE INTO furry_sound VALUES ('Awawawa!');
 INSERT IGNORE INTO furry_sound VALUES ('Awoo!');
 INSERT IGNORE INTO furry_sound VALUES ('Meow!');

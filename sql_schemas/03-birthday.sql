@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS birthday (
+    user INT PRIMARY KEY,
+    birthdate DATE
+);
+
+ALTER TABLE birthday ADD COLUMN IF NOT EXISTS user INT PRIMARY KEY;
+ALTER TABLE birthday ADD COLUMN IF NOT EXISTS birthdate DATE;
