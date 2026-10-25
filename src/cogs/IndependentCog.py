@@ -192,7 +192,7 @@ class IndependentCog(Cog):
         
     @app_commands.command(name='birthday',
                           description='Add your birthday')
-    async def birthday(self, interaction: Interaction, user: User | None = None, date: datetime | None = None, to_remove: bool = False):
+    async def birthday(self, interaction: Interaction, user: User | None = None, date: str | None = None, to_remove: bool = False):
         await interaction.response.defer()
         
         if to_remove:
@@ -200,7 +200,11 @@ class IndependentCog(Cog):
             await remove_birthday(user_id)
             return await interaction.followup.send("I'll forget your borthdate")
         if date is not None:
-            normalised_date = date.astimezone(SYDNEY)
+            try:
+                date_dt = datetime.strptime(date, "%d/%m/%Y")
+            except ValueError:
+                return await interaction.followup.send("Naur, use dd/mm/yyyy")
+            normalised_date = date_dt.astimezone(SYDNEY)
             user_id = interaction.user.id
             await set_birthday(user_id, normalised_date)
             if interaction.user is Member and interaction.guild is not None and (birthday_role := interaction.guild.get_role(BIRTHDAY_ROLE)) is not None:
