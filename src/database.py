@@ -124,7 +124,9 @@ async def get_people_by_birthday(birthdate: datetime):
     
     data = await execute_fetch(prompt, bd, _type = tuple[int])
     if data is None:
-        return 0
+        return None
+    if len(data) == 0:
+        return None
     return data[0][0]
 
 async def get_birthday_by_person(user_id: int):
@@ -132,6 +134,8 @@ async def get_birthday_by_person(user_id: int):
     
     data = await execute_fetch(prompt, user_id, _type = tuple[datetime])
     if data is None:
+        return None
+    if len(data) == 0:
         return None
     return data[0][0]
 
