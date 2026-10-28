@@ -6,7 +6,6 @@ import traceback
 from discord import File, Interaction, Message, Status, app_commands
 from discord.ext import commands, tasks
 
-from src.cogs.CocktowerCog import CocktowerCog
 from src.cogs.IndependentCog import BIRTHDAY_ROLE, IndependentCog, check_birthday
 from src.database import get_birthday_by_person, get_sounds, init, load_all_schemas
 
@@ -25,7 +24,6 @@ class BotClient(commands.Bot):
         await init()
         await load_all_schemas()
         logger.info("Add cogs...")
-        await self.add_cog(CocktowerCog())
         await self.add_cog(IndependentCog())
         
         logger.info(f'Hello, I\'m ready! {self.user}')
